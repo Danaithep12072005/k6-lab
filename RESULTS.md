@@ -16,14 +16,14 @@ Measurements below are from actual runs on this computer. Results vary because Q
 | A2 | Average load | 3 | 240 | 1.29881 | 390.28 ms | 426.79 ms | 0.00% | 100% (320/320) |
 | A3 | Stress | 5 | 399 | 2.199916 | 375.42 ms | 722.17 ms | 0.00% | 100% (532/532) |
 | A4 | Spike | 5 | 150 | 1.057017 | 378.77 ms | 389.74 ms | 0.00% | 100% (200/200) |
-| A5 | Soak | 2 | Pending 10-minute run | Pending | Pending | Pending | Pending | Pending |
+| A5 | Soak | 2 | 651 | 0.985806 | 372.14 ms | 488.48 ms | 0.00% | 100% (868/868) |
 
 ## Part B
-1. The smoke test passed all 20 checks. A2 passed all 320 checks; A3 passed all 532 checks; A4 passed all 200 checks. A5 values will be added from its completed run.
+1. The smoke test passed all 20 checks. A2 passed all 320 checks; A3 passed all 532 checks; A4 passed all 200 checks; A5 passed all 868 checks. All five Part A runs had 0% failed HTTP requests.
 2. With 5 VUs, the test makes one request per iteration and then sleeps for one second. Network response time is also part of the iteration, so the measured rate is lower than 5 requests/second.
 3. A2 p(95) was 390.28 ms at 3 VUs; A3 p(95) was 375.42 ms at up to 5 VUs. In these runs, p(95) did not increase; network and shared-server variation may explain the small difference. The maximum observed latency did rise from 426.79 ms to 722.17 ms.
 4. A4 reached 5 VUs briefly, then returned to 1 VU. Overall p(95) was 378.77 ms, maximum latency 389.74 ms, with 0% failed requests. Use the A4 HTML report's time series to inspect the response-time pattern during the spike and recovery.
-5. A5 runs 2 VUs for 10 minutes to look for latency/error drift over time. Its completed-run metrics and HTML report will be added when the run ends.
+5. A5 completed 10 minutes at 2 VUs with 651 requests, p(95)=372.14 ms, maximum latency 488.48 ms, 0% failed requests, and 100% checks (868/868). From the exported dashboard's 10-second snapshots, mean p(95) over the first minute was about 355.28 ms and over the last minute about 366.81 ms (an increase of 11.53 ms, about 3.2%). Both periods had 0% failed requests, so the run shows a small latency rise but no error-rate drift or obvious sustained degradation.
 6. p(95) represents the 95th percentile of request duration and shows tail latency; an average can hide a small group of slow requests.
 7. Local and public environments can differ in CPU, memory, network latency, background load, and data volume.
 8. Sending hundreds of VUs to a public service without permission could overload it or degrade service for other users. Only test within the lab's limits or systems you own/are authorized to test.
