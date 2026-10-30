@@ -9,11 +9,11 @@ const PARAMS = {
   },
 };
 
-// The customer wants no pepperoni, and no knife to cut the pizza.
+// The API's ingredient and tool names are case-sensitive.
 export default function () {
   const body = JSON.stringify({
-    excludedIngredients: ['pepperoni'],
-    excludedTools: ['knife'],
+    excludedIngredients: ['Pepperoni'],
+    excludedTools: ['Knife'],
   });
   const res = http.post(`${BASE_URL}/api/pizza`, body, PARAMS);
   check(res, {

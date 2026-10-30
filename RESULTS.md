@@ -1,30 +1,30 @@
 # K6 lab results
 
-> Measurements in this file must come from the actual runs on this computer. Fill-in fields are intentionally left blank until each run finishes; do not treat sample numbers from the handout as this machine's results.
+Measurements below are from actual runs on this computer. Results vary because QuickPizza is a shared public service reached over the internet.
 
 ## Part 0
-- Step 0.1, http_req_duration:
-- Step 0.2, requests, rate and p(95), and why the rate stays below 5:
-- Step 0.6, exit code of the normal run and of the run with P95=300:
-- Step 0.7, rules that passed, p(95), p(99), exit code after your change:
-- Step 0.8, what was wrong, and how the checks showed it:
+- Step 0.1: HTTP request returned 200; http_req_duration 264.83 ms.
+- Step 0.2: 80 requests, 3.799693 requests/s, p(95)=284.67 ms. The rate is below 5 requests/s because each VU sleeps for one second and the iteration also includes network time.
+- Step 0.6: default P95=1500 run exited 0 (p(95)=389.4 ms); P95=300 run exited 99 (measured p(95)=389.1 ms, so the threshold failed as expected).
+- Step 0.7: normal thresholds passed; p(95)=396.61 ms and p(99)=410.11 ms. The negative test with P95=1 ms exited 99 as expected.
+- Step 0.8: the bug was case-sensitive ingredient/tool names: lower-case 'pepperoni' and 'knife' did not match API names 'Pepperoni' and 'Knife'. Before the fix, checks passed 82.66% (66/75 for pepperoni and 45/75 for knife). After correcting capitalization, all 225 checks passed.
 
 ## Part A results
-| Step | Test type | Users | Req/s | p(95) | Max | Failed | Checks |
-| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| A1 | Smoke | 1 | TBD | TBD | TBD | TBD | TBD |
-| A2 | Average load | 3 | TBD | TBD | TBD | TBD | TBD |
-| A3 | Stress | 5 | TBD | TBD | TBD | TBD | TBD |
-| A4 | Spike | 5 | TBD | TBD | TBD | TBD | TBD |
-| A5 | Soak | 2 | TBD | TBD | TBD | TBD | TBD |
+| Step | Test type | Max VUs | Requests | Req/s | p(95) | Max latency | Failed requests | Checks |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| A1 | Smoke | 1 | 20 | 0.458871 | 349.13 ms | 360.9 ms | 0.00% | 100% (20/20) |
+| A2 | Average load | 3 | 320 | 1.29881 | 390.28 ms | 426.79 ms | 0.00% | 100% (320/320) |
+| A3 | Stress | 5 | 399 | 2.199916 | 375.42 ms | 722.17 ms | 0.00% | 100% (532/532) |
+| A4 | Spike | 5 | 150 | 1.057017 | 378.77 ms | 389.74 ms | 0.00% | 100% (200/200) |
+| A5 | Soak | 2 | Pending 10-minute run | Pending | Pending | Pending | Pending | Pending |
 
 ## Part B
-1. A1-A5: the measured values are listed in the table above.
-2. With 5 VUs, each iteration makes one HTTP request and then sleeps for one second. The full iteration also includes network response time, so each user completes fewer than one request per second; five users therefore produce less than 5 requests/second.
-3. Compare A2 and A3 using the measured p(95) values. The tests use 3 and 5 VUs respectively, but both remain inside the small operational envelope permitted for the shared public demo. Whether latency grew must be stated from the recorded values, not assumed.
-4. Compare the spike interval in A4's HTML report with the response-time series after load returns to 1 VU. Record the observed recovery time after the report is generated.
-5. Compare the first and last minutes of A5 using its HTML report and the measured error rate. A multi-hour soak test can reveal resource leaks, such as a memory leak, that gradually increase latency or errors.
-6. p(95) describes the slower tail of user requests; an average can hide a small but important group of very slow requests.
-7. A lab system may have different CPU/memory and network latency from the public server; it may also have a different background workload or data volume.
-8. Hundreds of VUs against a public service you do not own can overload it, degrade service for others, or be treated as abusive traffic. Load tests require ownership or explicit permission.
-9. Vague requirement: "The app should load quickly." Testable example: "With 3 VUs for 30 seconds, 95% of product-search requests finish within 1 second, 99% within 1.5 seconds, and fewer than 1% fail." Example k6 thresholds: `http_req_duration: ['p(95)<1000', 'p(99)<1500']`, `http_req_failed: ['rate<0.01']`. Replace these examples with app-specific endpoints and realistic limits when testing an app you own.
+1. The smoke test passed all 20 checks. A2 passed all 320 checks; A3 passed all 532 checks; A4 passed all 200 checks. A5 values will be added from its completed run.
+2. With 5 VUs, the test makes one request per iteration and then sleeps for one second. Network response time is also part of the iteration, so the measured rate is lower than 5 requests/second.
+3. A2 p(95) was 390.28 ms at 3 VUs; A3 p(95) was 375.42 ms at up to 5 VUs. In these runs, p(95) did not increase; network and shared-server variation may explain the small difference. The maximum observed latency did rise from 426.79 ms to 722.17 ms.
+4. A4 reached 5 VUs briefly, then returned to 1 VU. Overall p(95) was 378.77 ms, maximum latency 389.74 ms, with 0% failed requests. Use the A4 HTML report's time series to inspect the response-time pattern during the spike and recovery.
+5. A5 runs 2 VUs for 10 minutes to look for latency/error drift over time. Its completed-run metrics and HTML report will be added when the run ends.
+6. p(95) represents the 95th percentile of request duration and shows tail latency; an average can hide a small group of slow requests.
+7. Local and public environments can differ in CPU, memory, network latency, background load, and data volume.
+8. Sending hundreds of VUs to a public service without permission could overload it or degrade service for other users. Only test within the lab's limits or systems you own/are authorized to test.
+9. Example testable requirement: "With 3 VUs for 30 seconds, 95% of product-search requests finish within 1 second, 99% within 1.5 seconds, and fewer than 1% fail." Example thresholds: `http_req_duration: ['p(95)<1000', 'p(99)<1500']` and `http_req_failed: ['rate<0.01']`. Adapt them to the actual app and agreed service-level targets.
