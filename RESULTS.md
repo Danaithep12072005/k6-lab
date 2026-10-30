@@ -12,8 +12,8 @@ Measurements below are from actual runs on this computer. Results vary because Q
 ## Part A results
 | Step | Test type | Max VUs | Requests | Req/s | p(95) | Max latency | Failed requests | Checks |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| A1 | Smoke | 1 | 15 | 0.458871 | 349.13 ms | 360.9 ms | 0.00% | 100% (20/20) |
-| A2 | Average load | 3 | 240 | 1.29881 | 390.28 ms | 426.79 ms | 0.00% | 100% (320/320) |
+| A1 | Smoke | 1 | 20 | 0.458871 | 349.13 ms | 360.9 ms | 0.00% | 100% (20/20) |
+| A2 | Average load | 3 | 320 | 1.29881 | 390.28 ms | 426.79 ms | 0.00% | 100% (320/320) |
 | A3 | Stress | 5 | 399 | 2.199916 | 375.42 ms | 722.17 ms | 0.00% | 100% (532/532) |
 | A4 | Spike | 5 | 150 | 1.057017 | 378.77 ms | 389.74 ms | 0.00% | 100% (200/200) |
 | A5 | Soak | 2 | 651 | 0.985806 | 372.14 ms | 488.48 ms | 0.00% | 100% (868/868) |
